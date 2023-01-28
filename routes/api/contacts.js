@@ -9,21 +9,13 @@ const { validationPut } = require("../../middleware/validationPut");
 
 router.get("/", async (req, res, next) => {
   const allContacts = await contactsOperations.listContacts();
-  return res.status(200).json({
-    data: {
-      result: allContacts,
-    },
-  });
+  return res.status(200).json(allContacts);
 });
 
 router.get("/:contactId", async (req, res, next) => {
   const contact = await contactsOperations.getContactById(req.params.contactId);
   if (contact) {
-    return res.status(200).json({
-      data: {
-        result: contact,
-      },
-    });
+    return res.status(200).json(contact);
   } else {
     return res.status(404).json({
       message: "Not found",
@@ -33,11 +25,7 @@ router.get("/:contactId", async (req, res, next) => {
 
 router.post("/", validationPost(schemaPost), async (req, res, next) => {
   const contact = await contactsOperations.addContact({ ...req.body });
-  return res.status(201).json({
-    data: {
-      result: contact,
-    },
-  });
+  return res.status(201).json(contact);
 });
 
 router.delete("/:contactId", async (req, res, next) => {
@@ -59,9 +47,7 @@ router.put("/:contactId", validationPut(schemaPut), async (req, res, next) => {
     req.body
   );
   if (addedContact) {
-    return res.status(200).json({
-      result: addedContact,
-    });
+    return res.status(200).json(addedContact);
   } else {
     return res.status(404).json({
       message: "Not found",
