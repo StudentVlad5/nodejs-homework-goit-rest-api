@@ -2,10 +2,8 @@ const express = require("express");
 
 const contactsOperations = require("../../models/contacts");
 const router = express.Router();
-const { schemaPost } = require("../../middleware/scemaPost");
-const { schemaPut } = require("../../middleware/shemaPut");
-const { validationPost } = require("../../middleware/validationPost");
-const { validationPut } = require("../../middleware/validationPut");
+const { schema } = require("../../middleware/scema");
+const { validation } = require("../../middleware/validation");
 
 router.get("/", async (req, res, next) => {
   const allContacts = await contactsOperations.listContacts();
@@ -23,8 +21,8 @@ router.get("/:contactId", async (req, res, next) => {
   }
 });
 
-router.post("/", validationPost(schemaPost), async (req, res, next) => {
-  const contact = await contactsOperations.addContact({ ...req.body });
+router.post("/", validation(schema), async (req, res, next) => {
+  const contact = await contactsOperations.addContact(req.body);
   return res.status(201).json(contact);
 });
 
@@ -41,7 +39,7 @@ router.delete("/:contactId", async (req, res, next) => {
   }
 });
 
-router.put("/:contactId", validationPut(schemaPut), async (req, res, next) => {
+router.put("/:contactId", validation(schema), async (req, res, next) => {
   const addedContact = await contactsOperations.updateContact(
     req.params.contactId,
     req.body

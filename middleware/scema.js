@@ -1,6 +1,6 @@
 const Joi = require("joi");
 
-const schemaPost = Joi.object({
+const schema = Joi.object({
   name: Joi.string().alphanum().min(3).max(30).required(),
 
   phone: Joi.string()
@@ -16,4 +16,4 @@ const schemaPost = Joi.object({
     .required(),
 });
 
-module.exports = { schemaPost };
+module.exports = { schema };
