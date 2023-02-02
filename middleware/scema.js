@@ -14,6 +14,7 @@ const schema = Joi.object({
       tlds: { allow: ["com", "net"] },
     })
     .required(),
+  favorite: Joi.boolean(),
 });
 
 module.exports = { schema };

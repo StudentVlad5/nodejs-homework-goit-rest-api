@@ -1,56 +1,29 @@
 const express = require("express");
-
-const contactsOperations = require("../../models/contacts");
-const router = express.Router();
-const { schema } = require("../../middleware/scema");
 const { validation } = require("../../middleware/validation");
+const { isValidId } = require("../../middleware/isValidId");
+const { schema } = require("../../middleware/scema");
+const { cntrlWrap } = require("../../middleware/cntrlWrap");
 
-router.get("/", async (req, res, next) => {
-  const allContacts = await contactsOperations.listContacts();
-  return res.status(200).json(allContacts);
-});
+const {
+  getAll,
+  getById,
+  add,
+  update,
+  remove,
+  updateFavorite,
+} = require("../../controllers/contacts");
 
-router.get("/:contactId", async (req, res, next) => {
-  const contact = await contactsOperations.getContactById(req.params.contactId);
-  if (contact) {
-    return res.status(200).json(contact);
-  } else {
-    return res.status(404).json({
-      message: "Not found",
-    });
-  }
-});
-
-router.post("/", validation(schema), async (req, res, next) => {
-  const contact = await contactsOperations.addContact(req.body);
-  return res.status(201).json(contact);
-});
-
-router.delete("/:contactId", async (req, res, next) => {
-  const contact = await contactsOperations.removeContact(req.params.contactId);
-  if (contact) {
-    return res.status(200).json({
-      message: "contact deleted",
-    });
-  } else {
-    return res.status(404).json({
-      message: "Not found",
-    });
-  }
-});
-
-router.put("/:contactId", validation(schema), async (req, res, next) => {
-  const addedContact = await contactsOperations.updateContact(
-    req.params.contactId,
-    req.body
-  );
-  if (addedContact) {
-    return res.status(200).json(addedContact);
-  } else {
-    return res.status(404).json({
-      message: "Not found",
-    });
-  }
-});
+const router = express.Router();
+router.get("/", cntrlWrap(getAll));
+router.get("/:id", isValidId, cntrlWrap(getById));
+router.post("/", validation(schema), cntrlWrap(add));
+router.delete("/:id", isValidId, cntrlWrap(remove));
+router.put("/:id", isValidId, validation(schema), cntrlWrap(update));
+router.patch(
+  "/:id/favorite",
+  isValidId,
+  validation(schema),
+  cntrlWrap(updateFavorite)
+);
 
 module.exports = router;
