@@ -14,19 +14,16 @@ const {
 } = require("../../controllers/contacts");
 
 const router = express.Router();
-router.get("/", async (req, res) => cntrlWrap(getAll(req, res)));
-router.get("/:id", isValidId, async (req, res) => cntrlWrap(getById(req, res)));
-router.post("/", validation(schema), async (req, res) =>
-  cntrlWrap(add(req, res))
-);
-router.delete("/:id", isValidId, async (req, res) =>
-  cntrlWrap(remove(req, res))
-);
-router.put("/:id", isValidId, validation(schema), async (req, res) =>
-  cntrlWrap(update(req, res))
-);
-router.patch("/:id/favorite", isValidId, validation(schema), async (req, res) =>
-  cntrlWrap(updateFavorite(req, res))
+router.get("/", cntrlWrap(getAll));
+router.get("/:id", isValidId, cntrlWrap(getById));
+router.post("/", validation(schema), cntrlWrap(add));
+router.delete("/:id", isValidId, cntrlWrap(remove));
+router.put("/:id", isValidId, validation(schema), cntrlWrap(update));
+router.patch(
+  "/:id/favorite",
+  isValidId,
+  validation(schema),
+  cntrlWrap(updateFavorite)
 );
 
 module.exports = router;
