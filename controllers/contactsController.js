@@ -1,13 +1,33 @@
-const ContactSchema = require("../models/contact");
+const { ContactSchema } = require("../models/contact");
 
-const getAll = async (_, res) => {
-  const allContact = await ContactSchema.find({}, "-createdAt -updatedAt");
+const getAll = async (req, res) => {
+  const { _id } = req.user;
+  const { page = 1, limit = 20, favorite } = req.query;
+  const skip = (page - 1) * limit;
+  const findParams = favorite ? { owner: _id, favorite } : { owner: _id };
+  const allContact = await ContactSchema.find(
+    findParams,
+    "-createdAt -updatedAt",
+    {
+      skip,
+      limit: +limit,
+    }
+  );
+
+  // const allContact = await ContactSchema.find(
+  //   { owner: _id },
+  //   "-createdAt -updatedAt"
+  // );
   return res.status(200).json(allContact);
 };
 
 const getById = async (req, res) => {
   const { id } = req.params;
-  const contact = await ContactSchema.findById(id, "-createdAt -updatedAt");
+  const { _id } = req.user;
+  const contact = await ContactSchema.findById(
+    { _id: id, owner: _id },
+    "-createdAt -updatedAt"
+  );
   if (contact) {
     return res.status(200).json(contact);
   } else {
@@ -17,13 +37,18 @@ const getById = async (req, res) => {
 
 const add = async (req, res) => {
   const { body } = req;
-  const addedContact = await ContactSchema.create(body);
+  const { _id } = req.user;
+  const addedContact = await ContactSchema.create({ ...body, owner: _id });
   return res.status(201).json(addedContact);
 };
 
 const remove = async (req, res) => {
   const { id } = req.params;
-  const contactToDelete = await ContactSchema.findByIdAndRemove(id);
+  const { _id } = req.user;
+  const contactToDelete = await ContactSchema.findByIdAndRemove({
+    _id: id,
+    owner: _id,
+  });
   if (contactToDelete) {
     return res.status(200).json(contactToDelete);
   } else {
@@ -36,9 +61,14 @@ const remove = async (req, res) => {
 const update = async (req, res) => {
   const { body } = req;
   const { id } = req.params;
-  const contactToUpdate = await ContactSchema.findByIdAndUpdate(id, body, {
-    new: true,
-  });
+  const { _id } = req.user;
+  const contactToUpdate = await ContactSchema.findByIdAndUpdate(
+    { _id: id, owner: _id },
+    body,
+    {
+      new: true,
+    }
+  );
   if (contactToUpdate) {
     return res.status(200).json(contactToUpdate);
   } else {
@@ -50,9 +80,14 @@ const update = async (req, res) => {
 
 const updateFavorite = async (req, res) => {
   const { id } = req.params;
-  const contactToUpdate = await ContactSchema.findByIdAndUpdate(id, req.body, {
-    new: true,
-  });
+  const { _id } = req.user;
+  const contactToUpdate = await ContactSchema.findByIdAndUpdate(
+    { _id: id, owner: _id },
+    req.body,
+    {
+      new: true,
+    }
+  );
   if (contactToUpdate) {
     return res.status(200).json(contactToUpdate);
   } else {
