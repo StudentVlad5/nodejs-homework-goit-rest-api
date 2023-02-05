@@ -16,7 +16,7 @@ const isAuth = async (req, res, next) => {
     next(error);
   }
   try {
-    const { id } = jsonwebtoken.decode(token, process.env.JSONWEBTOKEN_SECRET);
+    const { id } = jsonwebtoken.verify(token, process.env.JSONWEBTOKEN_SECRET);
     const user = await UserSchema.findById(id);
     if (!user || !user.token || token !== user.token) {
       const error = new Error("Unauthorized");

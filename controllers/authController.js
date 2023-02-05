@@ -17,19 +17,17 @@ const signupController = async (req, res) => {
   return res
     .status(201)
     .json(
-      `successful authorization for email: ${user.email}, subscription: ${user.subscription}`
+      `successful authorization for token: ${token}, email: ${user.email}, subscription: ${user.subscription}`
     );
 };
 
 const loginController = async (req, res) => {
   const { email, password } = req.body;
   const user = await UserSchema.findOne({ email });
-  if (!user) {
-    return res.status(401).json(`Email is wrong`);
+  if (!user || !(await bcrypt.compare(password, user.password))) {
+    return res.status(401).json(`Credential is wrong`);
   }
-  if (!(await bcrypt.compare(password, user.password))) {
-    return res.status(401).json(`Password is wrong`);
-  }
+
   const token = jsonwebtoken.sign(
     {
       id: user._id,
