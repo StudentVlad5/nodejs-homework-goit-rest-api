@@ -1,9 +1,10 @@
 const express = require("express");
+const router = express.Router();
 const { validation } = require("../../middleware/validation");
 const { isValidId } = require("../../middleware/isValidId");
-const { schema } = require("../../middleware/scema");
+const { schemacontact } = require("../../middleware/scemacontact");
 const { cntrlWrap } = require("../../middleware/cntrlWrap");
-
+const { isAuth } = require("../../middleware/isAuth");
 const {
   getAll,
   getById,
@@ -11,18 +12,18 @@ const {
   update,
   remove,
   updateFavorite,
-} = require("../../controllers/contacts");
+} = require("../../controllers/contactsController");
 
-const router = express.Router();
+router.use(isAuth);
 router.get("/", cntrlWrap(getAll));
 router.get("/:id", isValidId, cntrlWrap(getById));
-router.post("/", validation(schema), cntrlWrap(add));
+router.post("/", validation(schemacontact), cntrlWrap(add));
 router.delete("/:id", isValidId, cntrlWrap(remove));
-router.put("/:id", isValidId, validation(schema), cntrlWrap(update));
+router.put("/:id", isValidId, validation(schemacontact), cntrlWrap(update));
 router.patch(
   "/:id/favorite",
   isValidId,
-  validation(schema),
+  validation(schemacontact),
   cntrlWrap(updateFavorite)
 );
 
