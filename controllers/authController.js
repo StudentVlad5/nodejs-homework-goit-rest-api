@@ -1,10 +1,12 @@
 const bcrypt = require("bcrypt");
 const jsonwebtoken = require("jsonwebtoken");
+const gravatar = require("gravatar");
 const { UserSchema } = require("../models/user");
 
 const signupController = async (req, res) => {
   const { name, email, password } = req.body;
-  const user = new UserSchema({ name, email, password });
+  const avatarURL = gravatar.url(email);
+  const user = new UserSchema({ name, email, password, avatarURL });
   const token = jsonwebtoken.sign(
     {
       id: user._id,
@@ -17,7 +19,7 @@ const signupController = async (req, res) => {
   return res
     .status(201)
     .json(
-      `successful authorization for token: ${token}, email: ${user.email}, subscription: ${user.subscription}`
+      `successful authorization for token: ${token}, email: ${user.email}, subscription: ${user.subscription}, avatarURL: ${avatarURL}`
     );
 };
 

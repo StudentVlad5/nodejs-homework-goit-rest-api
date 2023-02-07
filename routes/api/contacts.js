@@ -5,6 +5,7 @@ const { isValidId } = require("../../middleware/isValidId");
 const { schemacontact } = require("../../middleware/scemacontact");
 const { cntrlWrap } = require("../../middleware/cntrlWrap");
 const { isAuth } = require("../../middleware/isAuth");
+
 const {
   getAll,
   getById,
@@ -13,6 +14,7 @@ const {
   remove,
   updateFavorite,
 } = require("../../controllers/contactsController");
+
 
 router.use(isAuth);
 router.get("/", cntrlWrap(getAll));
