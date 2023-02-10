@@ -14,6 +14,8 @@ const {
   logoutController,
 } = require("../../controllers/authController");
 const { getCurrentUser } = require("../../controllers/getCurrentUser");
+const { upload } = require("../../middleware/upload");
+const { updateAvatar } = require("../../controllers/updateAvatar");
 
 const router = express.Router();
 router.post("/login", validation(schemauserLogin), cntrlWrap(loginController));
@@ -30,4 +32,6 @@ router.patch(
   validation(scemaSubscription),
   cntrlWrap(userSubscription)
 );
+
+router.patch("/avatars", isAuth, upload.single("avatar"), cntrlWrap(updateAvatar));
 module.exports = router;
