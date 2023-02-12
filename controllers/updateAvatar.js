@@ -22,7 +22,7 @@ const updateAvatar = async (req, res) => {
         .quality(60) // set JPEG quality
         .write(`${FILE_DIR_FORAVATAR}/${avatarName}`); // save
     });
-    const avatarURL = path.join("avatars", avatarName);
+    const avatarURL = path.join(FILE_DIR_FORAVATAR, avatarName);
     await UserSchema.findByIdAndUpdate(req.user._id, { avatarURL });
     res.status(200).json(avatarURL);
   } catch (error) {
