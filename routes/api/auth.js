@@ -12,6 +12,8 @@ const {
   signupController,
   loginController,
   logoutController,
+  verifyController,
+  verifyEmailController,
 } = require("../../controllers/authController");
 const { getCurrentUser } = require("../../controllers/getCurrentUser");
 const { upload } = require("../../middleware/upload");
@@ -24,6 +26,8 @@ router.post(
   validation(schemauserRegistration),
   cntrlWrap(signupController)
 );
+router.post("/signup_verify/:code", cntrlWrap(verifyController));
+router.post("/verify", cntrlWrap(verifyEmailController));
 router.get("/logout", isAuth, cntrlWrap(logoutController));
 router.get("/current", isAuth, cntrlWrap(getCurrentUser));
 router.patch(
@@ -33,5 +37,10 @@ router.patch(
   cntrlWrap(userSubscription)
 );
 
-router.patch("/avatars", isAuth, upload.single("avatar"), cntrlWrap(updateAvatar));
+router.patch(
+  "/avatars",
+  isAuth,
+  upload.single("avatar"),
+  cntrlWrap(updateAvatar)
+);
 module.exports = router;
